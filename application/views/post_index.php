@@ -15,36 +15,50 @@
 
 <div id="main-content">
     <h2>Add New Post</h2>
-    <form class="post-form" action="savedata.php" method="post">
+    <?php echo form_open_multipart('welcome/index','class="post-form"'); ?>
+
+        <?php if($this->session->flashdata('post_created')): ?>
+            <?php echo '<p class="alert alert-success">'.$this->session->flashdata('post_created').'</p>'; ?>
+        <?php endif; ?>
+
+        <div id="errors" style="color:red" >
+            <?php echo validation_errors(); ?>
+        </div>
 
         <!-- TITLE -->
         <div class="form-group">
             <label>Title</label>
-            <input type="text" name="title" />
+            <input type="text" name="title" value="<?php echo set_value('title');?>"/>
         </div>
 
         <!-- BODY -->
         <div class="form-group">
             <label>Body</label>
-            <textarea name="body" id="" cols="35" rows="5"></textarea>
+            <textarea name="body" id="" cols="35" rows="5"><?php echo set_value('body');?></textarea>
         </div>
 
         <!-- IMAGE -->
         <div class="form-group">
             <label>Image</label>
-            <input type="file" name="image" />
+            <input type="file" name="userfile" size="20" />
         </div>
 
         <!-- PRICE -->
         <div class="form-group">
             <label>Price</label>
-            <input type="number" name="price" />
+            <input type="number" name="price" value="<?php echo set_value('number');?>"/>
+        </div>
+
+        <!-- ADDRESS -->
+        <div class="form-group">
+            <label>Address</label>
+            <input type="text" name="address" value="<?php echo set_value('address');?>" />
         </div>
 
         <!-- SUB CATEGORY -->
         <div class="form-group">
             <label>Category</label>
-            <select name="class" id="select_category">
+            <select name="category" id="select_category">
                 <option value="" selected disabled>Select Category</option>
                 <?php foreach($categories as $category): ?>
                 <option value="<?php echo $category['id'] ?>"><?php echo $category['name'] ?></option>
@@ -55,11 +69,8 @@
         <!-- CATEGORY -->
         <div class="form-group">
             <label>Sub Category</label>
-            <select name="class">
-                <option value="" selected disabled>Select Category</option>
-                <option value="1">Technology</option>
-                <option value="2">Business</option>
-                <option value="3">Art</option>
+            <select name="sub_category" id="select_sub_category">
+                <option value="" selected disabled>Select Sub Category</option>
             </select>
         </div>
 
@@ -78,6 +89,7 @@
         $(document).ready(function(){
         
             $('#select_category').change(function(){
+                    $('#select_sub_category').empty();
                     var category = $(this).val();
 
                     // console.log(category);
@@ -89,18 +101,20 @@
                             method: 'POST',
                             success: function(response){
                                     console.log(response)
-                                    // var len = response.length;
+                                    var len = response.length;
                                     // console.log(len)
 
                                     // var name = response[0].name;
                                     // console.log(name)
 
-                                    // if(len > 0){
-                                    //     var id = response[0].id;
-                                    //     var name = response[0].name;
-
-                                    //     alert(id);
-                                    // }
+                                    if(len > 0){
+                                        for(var i = 0; i < len; i++){
+                                            $('#select_sub_category').append('<option value="' + response[i].id +'">' + response[i].name + '</option>');
+                                        }
+                                    } else {
+                                        var nothing = 'No Sub Category Available';
+                                        $('#select_sub_category').append('<option value="0">' + nothing + '</option>');
+                                    }
                             },
                             failure: function(errMsg) {
                                 console.log(errMsg)

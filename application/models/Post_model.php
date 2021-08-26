@@ -26,4 +26,20 @@ class Post_model extends CI_Model {
 
         return $response;
     }
+
+    public function create_post($post_image){
+
+        $data = array(
+            'title' => $this->input->post('title'),
+            'body' => $this->input->post('body'),
+            'image' => $post_image,
+            'price' => $this->input->post('price'),
+            'address' => $this->input->post('address'),
+            'category_id' => $this->input->post('category'),
+            'subcategory_id' => $this->input->post('sub_category'),
+            
+        );
+
+        return $this->db->insert('posts', $data);
+    }
 }
